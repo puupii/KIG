@@ -10,8 +10,9 @@ for i in {1..365}; do
     # Create a file called "${DAY}.txt" containing the day number.
     # If you don't want to create files this way, replace this line with your own logic
     # (e.g., `git add <your-change-file>`), ensuring a change exists for each iteration.
-    echo "Day $i" > "day-${DAY}.txt"
+    echo "Day $i" > "day.txt"
 
+    git add day.txt
     # Create the commit
     git commit -m "$MSG" --date="$(date -d "+$((i*24)) hours" '+%a %b %e %H:%M') ${DAY} 00:00" || break
 done
