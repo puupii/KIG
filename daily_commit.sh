@@ -1,17 +1,36 @@
+
 #!/bin/bash
 
-# Optional: Set a default message if you want all commits to look the same
+set -e
 
-MSG="${1:-very important commit}"
+MSG="${1:-Test commit}"
+BRANCH=$(git branch --show-current)
 
-for i in {1..365}; do
-    echo "Day $i" > "day.txt"
+if [ -z "$BRANCH" ]; then
+    echo "Error: No Git branch checked out."
+    exit 1
+fi
+
+echo "Generating 365 test commits..."
+
+for i in $(seq 365 -1 1); do
+    DATE=$(date -d "$i days ago" +"%Y-%m-%d")
+
+    echo "Test commit for $DATE" > day.txt
 
     git add day.txt
-    # Create the commit
-    git commit  --date= "$i day ago"  -m "$MSG"|| break
+
+    GIT_AUTHOR_DATE="$DATE 12:00:00" \
+    GIT_COMMITTER_DATE="$DATE 12:00:00" \
+    git commit -m "$MSG - $DATE" --allow-empty
 done
 
-git push
+    DATE=$(date)
+    GIT_AUTHOR_DATE="$DATE"  \
+    GIT_COMMITTER_DATE="$DATE" \
+echo "Finished generating commits."
 
-echo "Script finished."
+git push -u origin "$BRANCH"
+
+echo "All done!"
+
